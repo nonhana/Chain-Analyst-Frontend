@@ -1,4 +1,4 @@
-# chain_analyse
+# chain_analyst
 
 ## Project setup
 ```
