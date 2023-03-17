@@ -17,7 +17,7 @@
         </div>
       </el-col>
       <el-col :span="0.5" class="edgeactions">
-        <div>
+        <div @click="edit_item(id)">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -133,6 +133,9 @@ export default {
   methods: {
     delete_item(id) {
       this.$emit("delete_item", id);
+    },
+    edit_item(id) {
+      this.$emit("edit_item", id);
     },
   },
   props: ["id", "startnode", "edgename", "endnode"],

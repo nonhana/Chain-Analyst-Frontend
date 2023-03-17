@@ -154,13 +154,13 @@
           <div
             v-for="(item, index) in model_list"
             :key="index"
-            @click="chaindetails(item.chain_id)"
+            @click="chaindetails(item.model_id)"
           >
             <chainItem
-              :chain_id="item.chain_id"
-              :chain_name="item.chain_name"
-              :chain_introduction="item.chain_introduction"
-              :chain_picture="item.chain_picture"
+              :model_id="item.model_id"
+              :model_name="item.model_name"
+              :model_detail="item.model_detail"
+              :model_picture="item.model_picture"
             />
           </div>
         </div>
@@ -317,42 +317,14 @@
 
 <script>
 import chainItem from "../little/chain-item.vue";
+import { getModelListAPI } from "@/api/model";
 export default {
   name: "HomeMain",
   data() {
     return {
       buttonHeight: 107,
       dialogVisable: false,
-      model_list: [
-        {
-          chain_id: 0,
-          chain_name: "产业链",
-          chain_introduction:
-            "产业链简介产业链简介产业链简介产业链简介产业链简介",
-          chain_picture: "https://dummyimage.com/400X400",
-        },
-        {
-          chain_id: 1,
-          chain_name: "产业链",
-          chain_introduction:
-            "产业链简介产业链简介产业链简介产业链简介产业链简介",
-          chain_picture: "https://dummyimage.com/400X400",
-        },
-        {
-          chain_id: 2,
-          chain_name: "产业链",
-          chain_introduction:
-            "产业链简介产业链简介产业链简介产业链简介产业链简介",
-          chain_picture: "https://dummyimage.com/400X400",
-        },
-        {
-          chain_id: 3,
-          chain_name: "产业链",
-          chain_introduction:
-            "产业链简介产业链简介产业链简介产业链简介产业链简介",
-          chain_picture: "https://dummyimage.com/400X400",
-        },
-      ],
+      model_list: [],
     };
   },
   methods: {
@@ -383,6 +355,13 @@ export default {
   },
   components: {
     chainItem,
+  },
+  mounted() {
+    getModelListAPI().then((res) => {
+      if (res.data) {
+        this.model_list = res.data.model_list;
+      }
+    });
   },
 };
 </script>

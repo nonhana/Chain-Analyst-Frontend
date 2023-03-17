@@ -17,6 +17,7 @@
           <el-input v-model="account" placeholder="请输入账号"></el-input>
         </div>
       </el-row>
+
       <el-row
         type="flex"
         justify="space-between"
@@ -26,7 +27,11 @@
           <span class="choices">密码：</span>
         </div>
         <div>
-          <el-input v-model="password" placeholder="请输入密码"></el-input>
+          <el-input
+            v-model="password"
+            placeholder="请输入密码"
+            type="password"
+          ></el-input>
         </div>
       </el-row>
     </div>
@@ -41,7 +46,7 @@
       justify="center"
       style="position: absolute; bottom: 50px; left: 140px"
     >
-      <div class="button">
+      <div class="button" @click="login()">
         <span>登录</span>
       </div>
     </el-row>
@@ -49,6 +54,7 @@
 </template>
 
 <script>
+import { userLoginAPI } from "@/api/user";
 export default {
   name: "LoginWindow",
   data() {
@@ -60,6 +66,44 @@ export default {
   methods: {
     register() {
       this.$emit("return_register", false);
+    },
+    login() {
+      if (this.account == "" || this.password == "") {
+        this.$notify({
+          title: "登录失败",
+          message: "账号/密码还没有填好哦",
+          type: "error",
+        });
+        return;
+      }
+      userLoginAPI({
+        account: this.account,
+        password: this.password,
+      }).then((res) => {
+        if (res.data) {
+          // console.log(res.data);
+          if (res.data.result_code == 0) {
+            this.$router.push({
+              name: "home",
+            });
+            localStorage.setItem(
+              "user_info",
+              JSON.stringify(res.data.userinfo)
+            );
+            this.$notify({
+              title: "登录成功",
+              message: `${this.account}，欢迎回来！`,
+              type: "success",
+            });
+          } else {
+            this.$notify({
+              title: "登录失败！",
+              message: `${res.data.result_msg}`,
+              type: "error",
+            });
+          }
+        }
+      });
     },
   },
 };

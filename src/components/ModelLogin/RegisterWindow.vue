@@ -14,19 +14,7 @@
           <span class="choices">用户名：</span>
         </div>
         <div>
-          <el-input v-model="username" placeholder="请输入账号"></el-input>
-        </div>
-      </el-row>
-      <el-row
-        type="flex"
-        justify="space-between"
-        style="width: 350px; align-items: center; margin: 28px 0 0 0"
-      >
-        <div>
-          <span class="choices">密码：</span>
-        </div>
-        <div>
-          <el-input v-model="password" placeholder="请输入密码"></el-input>
+          <el-input v-model="username" placeholder="设置你的用户名"></el-input>
         </div>
       </el-row>
       <el-row
@@ -38,7 +26,23 @@
           <span class="choices">账号：</span>
         </div>
         <div>
-          <el-input v-model="account" placeholder="请输入密码"></el-input>
+          <el-input v-model="account" placeholder="请输入账号"></el-input>
+        </div>
+      </el-row>
+      <el-row
+        type="flex"
+        justify="space-between"
+        style="width: 350px; align-items: center; margin: 28px 0 0 0"
+      >
+        <div>
+          <span class="choices">密码：</span>
+        </div>
+        <div>
+          <el-input
+            v-model="password"
+            placeholder="请输入密码"
+            type="password"
+          ></el-input>
         </div>
       </el-row>
     </div>
@@ -47,7 +51,7 @@
       justify="center"
       style="position: absolute; bottom: 50px; left: 140px"
     >
-      <div @click="login()" class="button">
+      <div @click="register()" class="button">
         <span>注册</span>
       </div>
     </el-row>
@@ -55,6 +59,7 @@
 </template>
 
 <script>
+import { userRegisterAPI } from "@/api/user";
 export default {
   name: "RegisterWindow",
   data() {
@@ -65,8 +70,42 @@ export default {
     };
   },
   methods: {
-    login() {
-      this.$emit("return_login", true);
+    register() {
+      if (this.username == "" || this.account == "" || this.password == "") {
+        this.$notify({
+          title: "注册失败！",
+          message: "必填项未填好",
+          type: "error",
+        });
+        return;
+      } else {
+        const paramslist = {
+          username: this.username,
+          account: this.account,
+          password: this.password,
+        };
+        userRegisterAPI(paramslist).then((res) => {
+          if (res.data) {
+            // console.log(res.data)
+            if (res.data.result_code == 0) {
+              this.username = "";
+              this.account = "";
+              this.password = "";
+              this.$emit("return_login", true);
+              this.$notify({
+                title: "注册成功！",
+                type: "success",
+              });
+            } else {
+              this.$notify({
+                title: "注册失败",
+                message: `${res.data.result_msg}`,
+                type: "error",
+              });
+            }
+          }
+        });
+      }
     },
   },
 };

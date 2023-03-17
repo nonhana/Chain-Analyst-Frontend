@@ -6,7 +6,7 @@
     </el-row>
 
     <el-row type="flex" style="margin: 30px 0">
-      <span class="title">1.添加涉及节点</span>
+      <span class="title">2.添加涉及节点</span>
     </el-row>
 
     <div class="uploaddata" style="margin: 50px 0 0 0">
@@ -26,7 +26,6 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
-          @input.native="filterData"
         >
           <el-option
             v-for="item in nodes_list1"
@@ -54,7 +53,6 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
-          @input.native="filterData"
         >
           <el-option
             v-for="item in nodes_list2"
@@ -82,7 +80,6 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
-          @input.native="filterData"
         >
           <el-option
             v-for="item in nodes_list3"
@@ -110,7 +107,6 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
-          @input.native="filterData"
         >
           <el-option
             v-for="item in nodes_list4"
@@ -138,7 +134,6 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
-          @input.native="filterData"
         >
           <el-option
             v-for="item in nodes_list5"
@@ -166,7 +161,6 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
-          @input.native="filterData"
         >
           <el-option
             v-for="item in nodes_list6"
@@ -194,7 +188,6 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
-          @input.native="filterData"
         >
           <el-option
             v-for="item in nodes_list7"
@@ -208,7 +201,14 @@
     </div>
 
     <el-row type="flex" justify="center" style="margin: 50px 0 0 0">
-      <div class="button" @click="change_upload_status(1)">
+      <div
+        class="button"
+        @click="change_upload_status(0)"
+        style="margin: 0 50px 0 0"
+      >
+        <span>上一步</span>
+      </div>
+      <div class="button" @click="change_upload_status(2)">
         <span>下一步</span>
       </div>
     </el-row>
@@ -220,6 +220,7 @@ export default {
   name: "UploadNodes",
   data() {
     return {
+      model_nodes_type: ["n", "m1", "m2", "m3", "m4", "m5", "m6"],
       n: [],
       m1: [],
       m2: [],
@@ -240,7 +241,70 @@ export default {
   methods: {
     change_upload_status(num) {
       this.$emit("change_upload_status", num);
+      const model_nodes = {
+        n: [],
+        m1: [],
+        m2: [],
+        m3: [],
+        m4: [],
+        m5: [],
+        m6: [],
+      };
+      this.n.forEach((item) => {
+        model_nodes.n.push({
+          label: item,
+          value: item,
+        });
+      });
+      this.m1.forEach((item) => {
+        model_nodes.m1.push({
+          label: item,
+          value: item,
+        });
+      });
+      this.m2.forEach((item) => {
+        model_nodes.m2.push({
+          label: item,
+          value: item,
+        });
+      });
+      this.m3.forEach((item) => {
+        model_nodes.m3.push({
+          label: item,
+          value: item,
+        });
+      });
+      this.m4.forEach((item) => {
+        model_nodes.m4.push({
+          label: item,
+          value: item,
+        });
+      });
+      this.m5.forEach((item) => {
+        model_nodes.m5.push({
+          label: item,
+          value: item,
+        });
+      });
+      this.m6.forEach((item) => {
+        model_nodes.m6.push({
+          label: item,
+          value: item,
+        });
+      });
+      localStorage.setItem("model_nodes", JSON.stringify(model_nodes));
     },
+  },
+  mounted() {
+    if (localStorage.getItem("model_nodes")) {
+      this.model_nodes_type.forEach((item) => {
+        JSON.parse(localStorage.getItem("model_nodes"))[item].forEach(
+          (label) => {
+            this[item].push(label.label);
+          }
+        );
+      });
+    }
   },
 };
 </script>
@@ -254,6 +318,7 @@ export default {
   background: #ffffff;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
   padding: 30px 40px;
+  transform: scale(0.8);
 }
 .titleline {
   width: 12px;

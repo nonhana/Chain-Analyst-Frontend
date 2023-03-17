@@ -8,7 +8,21 @@
         v-if="upload_status == 0"
         type="flex"
         justify="center"
-        style="margin: 60px 0 0 50px; position: absolute"
+        style="margin: 0 0 0 50px; position: absolute"
+      >
+        <UploadInfo @change_upload_status="change_upload_status" />
+      </el-row>
+    </transition>
+
+    <transition
+      enter-active-class="animate__animated animate__backInUp"
+      leave-active-class="animate__animated animate__backOutDown"
+    >
+      <el-row
+        v-if="upload_status == 1"
+        type="flex"
+        justify="center"
+        style="margin: 0 0 0 50px; position: absolute"
       >
         <UploadNodes @change_upload_status="change_upload_status" />
       </el-row>
@@ -19,10 +33,10 @@
       leave-active-class="animate__animated animate__backOutUp"
     >
       <el-row
-        v-if="upload_status == 1"
+        v-if="upload_status == 2"
         type="flex"
         justify="center"
-        style="margin: 60px 0 0 50px; position: absolute"
+        style="margin: 0 0 0 50px; position: absolute"
       >
         <UploadEdges
           @change_upload_status="change_upload_status"
@@ -32,10 +46,10 @@
     </transition>
 
     <el-row
-      v-if="upload_status == 2"
+      v-if="upload_status == 3"
       type="flex"
       justify="center"
-      style="margin: 60px 0 0 0"
+      style="margin: 0 0 0 0"
     >
       <UploadFiles @submit_model="submit_model" />
     </el-row>
@@ -49,12 +63,13 @@
 
       <el-row type="flex" justify="center" style="margin: 30px 0 0 0">
         <div class="picturebox">
-          <el-image
+          <!-- <el-image
             style="height: 350px"
             :src="model_picture[0]"
             :preview-src-list="model_picture"
           >
-          </el-image>
+          </el-image> -->
+          <div id="model" style="height: 500px; width: 100%"></div>
         </div>
       </el-row>
 
@@ -68,6 +83,7 @@
 </template>
 
 <script>
+import UploadInfo from "@/components/ModelUpload/UploadInfo.vue";
 import UploadNodes from "@/components/ModelUpload/UploadNodes.vue";
 import UploadEdges from "@/components/ModelUpload/UploadEdges.vue";
 import UploadFiles from "@/components/ModelUpload/UploadFiles.vue";
@@ -78,9 +94,24 @@ export default {
       upload_status: 0,
       dialogVisable: false,
       model_picture: ["https://dummyimage.com/400X400"],
+
+      model_nodes: [],
+      model_nodes_labellist: [],
+      model_edges: [],
+      model_nodes_type: ["n", "m1", "m2", "m3", "m4", "m5", "m6"],
+      nodes_type: [
+        "所属行业",
+        "附属行业",
+        "子行业",
+        "涉及公司",
+        "主营产品",
+        "产品小类",
+        "涉及材料",
+      ],
     };
   },
   components: {
+    UploadInfo,
     UploadNodes,
     UploadEdges,
     UploadFiles,
@@ -91,6 +122,156 @@ export default {
     },
     submit_model(val) {
       this.dialogVisable = val;
+      if (localStorage.getItem("model_nodes")) {
+        const nodes_source = JSON.parse(localStorage.getItem("model_nodes"));
+        this.model_nodes_type.forEach((item, index) => {
+          nodes_source[item].forEach((node) => {
+            const node_item = {
+              name: node.label,
+              category: this.nodes_type[index],
+            };
+            this.model_nodes.push(node_item);
+            this.model_nodes_labellist.push(node_item.name);
+          });
+        });
+      }
+      if (localStorage.getItem("edge_list")) {
+        const edges_source = JSON.parse(localStorage.getItem("edge_list"));
+        edges_source.forEach((item) => {
+          const edge_item = {
+            source: item.start,
+            target: item.end,
+            name: item.name,
+          };
+          this.model_edges.push(edge_item);
+        });
+      }
+      console.log(this.model_edges);
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.createCharts();
+        }, 500);
+      });
+    },
+    createCharts() {
+      let myChart = this.$echarts.init(document.getElementById("model"));
+      let option = {
+        backgroundColor: "#EEF1F3",
+        color: [
+          "#ee6666",
+          "#91cc75",
+          "#fac858",
+          "#5470c6",
+          "#73c0de",
+          "#3ba272",
+          "#fc8452",
+          "#9a60b4",
+          "#ea7ccc",
+        ],
+        title: {
+          show: false,
+          text: "产业链可视化",
+          textStyle: {
+            color: "#000",
+            fontWeight: 700,
+            fontSize: 20,
+            left: "center",
+          },
+        },
+        tooltip: {
+          formatter: function (x) {
+            return x.data.name;
+          },
+        },
+        legend: [
+          {
+            //图例
+            x: "center",
+            show: true,
+            data: [
+              "所属行业",
+              "附属行业",
+              "子行业",
+              "涉及公司",
+              "主营产品",
+              "产品小类",
+              "涉及材料",
+            ],
+          },
+        ],
+        series: [
+          {
+            type: "graph",
+            data: this.model_nodes,
+            links: this.model_edges,
+            legendHoverLink: true,
+            layout: "force",
+            categories: [
+              { name: "所属行业", symbolSize: 60 },
+              { name: "附属行业", symbolSize: 60 },
+              { name: "子行业", symbolSize: 60 },
+              { name: "涉及公司", symbolSize: 60 },
+              { name: "主营产品", symbolSize: 60 },
+              { name: "产品小类", symbolSize: 60 },
+              { name: "涉及材料", symbolSize: 60 },
+            ],
+            force: {
+              repulsion: [1000, 2000], //节点之间的斥力因子,支持设置成数组表达斥力的范围
+              edgeLength: [10, 20],
+              layoutAnimation: true,
+              friction: 0.1, //节点的移动速度。取值范围 0 到 1。
+              edgeLength: [70, 90], //两个节点之间的距离，这个距离也会受 repulsion影响
+            },
+            symbolSize: 60,
+            itemStyle: {
+              shadowColor: "#666",
+              shadowOffsetX: 2,
+              shadowOffsetY: 2,
+            },
+            roam: true, //是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
+            draggable: true, //节点是否可拖拽，只在使用力引导布局的时候有用。
+            edgeSymbol: ["circle", "arrow"],
+            edgeSymbolSize: [4, 8],
+            cursor: "pointer",
+            label: {
+              show: true, // 图形上的文本标签， 可用于说明图形的一些数据信息， 比如值， 名称等
+              fontStyle: "oblique",
+              // position: "top",
+              fontSize: 12,
+              color: "#000", //如果设置为 'inherit'，则为视觉映射得到的颜色，如系列色。
+              width: 100,
+              overflow: "break", //文字超出宽度是否截断或者换行。配置width时有效
+            },
+            labelLayout: {
+              moveOverlap: "shiftX", //在标签重叠的时候是否挪动标签位置以防止重叠。
+              draggable: true, //标签是否可以允许用户通过拖拽二次调整位置。
+            },
+            emphasis: {
+              scale: true, //是否开启高亮后节点的放大效果。
+              focus: "adjacency",
+            },
+            lineStyle: {
+              color: "#3d3d3d",
+              width: 2,
+              curveness: 0, //关系线的曲度，支持从 0 到 1 的值，值越大曲度越大。
+            },
+            edgeLabel: {
+              // show: true,
+              fontWeight: 800,
+              fontSize: 12,
+              color: "#3d3d3d",
+              formatter: function (x) {
+                return x.data.name;
+              },
+            },
+          },
+        ],
+      };
+      myChart.setOption(option);
+      //窗口大小变化时，图表自适应窗口
+      window.onresize = function () {
+        myChart.resize();
+      };
     },
   },
   watch: {
@@ -102,6 +283,7 @@ export default {
       immediate: true,
     },
   },
+  mounted() {},
 };
 </script>
 
@@ -132,7 +314,6 @@ export default {
   border-radius: 30px;
   box-sizing: border-box;
   width: 800px;
-  height: 600px;
   overflow: hidden;
 }
 .dialogtitle {
@@ -143,7 +324,6 @@ export default {
 }
 .picturebox {
   width: 700px;
-  height: 350px;
   display: flex;
   justify-content: center;
   align-items: center;

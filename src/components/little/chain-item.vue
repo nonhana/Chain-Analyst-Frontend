@@ -4,17 +4,17 @@
       <el-col :span="0.5">
         <el-row>
           <div class="title">
-            <span>{{ chain_name }}</span>
+            <span>{{ model_name }}</span>
           </div>
         </el-row>
         <el-row style="margin: 15px 0 0 0">
           <div class="introduction">
-            <span>{{ chain_introduction }}</span>
+            <span>{{ model_detail }}</span>
           </div>
         </el-row>
       </el-col>
       <el-col :span="0.5" class="imgbox">
-        <img :src="chain_picture" alt="" />
+        <img :src="model_picture" alt="" />
       </el-col>
     </el-row>
   </div>
@@ -30,7 +30,7 @@ export default {
   //     chain_picture: "https://dummyimage.com/400X400",
   //   };
   // },
-  props: ["chain_id","chain_name", "chain_introduction", "chain_picture"],
+  props: ["model_id","model_name", "model_detail", "model_picture"],
 };
 </script>
 

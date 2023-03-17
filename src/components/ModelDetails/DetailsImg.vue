@@ -1,7 +1,12 @@
 <template>
   <div name="DetailsImg" class="DetailsImg-wrap">
     <div class="imgbox">
-      <img :src="model_picture" alt="" />
+      <el-image
+        style="750px"
+        :src="model_picture[0]"
+        :preview-src-list="model_picture"
+      >
+      </el-image>
     </div>
   </div>
 </template>
@@ -11,7 +16,7 @@ export default {
   name: "DetailsImg",
   data() {
     return {
-      model_picture: "https://dummyimage.com/400X400",
+      model_picture: ["https://dummyimage.com/400X400"],
     };
   },
 };
@@ -34,8 +39,5 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.imgbox img {
-  height: 750px;
 }
 </style>

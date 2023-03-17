@@ -12,7 +12,7 @@
         style="margin: 30px 0 0 0; width: 1041px"
       >
         <div>
-          <span class="title">2.添加节点所涉及的边</span>
+          <span class="title">3.添加节点所涉及的边</span>
         </div>
         <div>
           <div class="littlebutton" @click="upload_new_edge()">
@@ -39,6 +39,7 @@
         :startnode="item.start"
         :edgename="item.name"
         :endnode="item.end"
+        @edit_item="edit_item"
         @delete_item="delete_item"
       />
     </el-row>
@@ -51,7 +52,7 @@
       <div
         style="margin: 0 30px 0 0"
         class="button"
-        @click="change_upload_status(0)"
+        @click="change_upload_status(1)"
       >
         <span>上一步</span>
       </div>
@@ -166,7 +167,7 @@
               style="width: 150px"
             >
               <el-option
-                v-for="item in start_nodes_list"
+                v-for="item in end_nodes_list"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -190,14 +191,17 @@
 // 导入animate.css动画样式库
 import "animate.css";
 import edgeItem from "../little/edge-item.vue";
+import { uploadModelAPI } from "@/api/model";
 export default {
   name: "UploadEdges",
   data() {
     return {
+      user_id: 0,
       edgedialogVisable: false,
       edge_list: [],
 
       // 添加边弹窗内容信息
+      model_nodes: {},
       startnode: [],
       endnode: [],
       start_type: "请选择",
@@ -214,6 +218,7 @@ export default {
       start_nodes_list: [],
       end_nodes_list: [],
       edge_name: "",
+      model_nodes_type: ["n", "m1", "m2", "m3", "m4", "m5", "m6"],
     };
   },
   computed: {
@@ -225,6 +230,17 @@ export default {
     edgeItem,
   },
   methods: {
+    addZero(s) {
+      return s < 10 ? "0" + s : s;
+    },
+    getNowTime() {
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      let time = year + "-" + this.addZero(month) + "-" + this.addZero(day);
+      return time;
+    },
     change_upload_status(num) {
       this.$emit("change_upload_status", num);
     },
@@ -233,9 +249,13 @@ export default {
     },
     chooseStartType(val) {
       this.start_type = val;
+      const index = this.node_type.indexOf(this.start_type);
+      this.start_nodes_list = this.model_nodes[this.model_nodes_type[index]];
     },
     chooseEndType(val) {
       this.end_type = val;
+      const index = this.node_type.indexOf(this.end_type);
+      this.end_nodes_list = this.model_nodes[this.model_nodes_type[index]];
     },
     submit_edge() {
       let edge_item = {
@@ -246,10 +266,14 @@ export default {
       };
       this.edge_list.push(edge_item);
       this.edgedialogVisable = false;
+      localStorage.setItem("edge_list", JSON.stringify(this.edge_list));
       this.$notify({
         title: "添加成功",
         type: "success",
       });
+    },
+    edit_item(val) {
+      this.edgedialogVisable = true;
     },
     delete_item(val) {
       this.edge_list.forEach((item, index) => {
@@ -259,8 +283,45 @@ export default {
       });
     },
     submit_model() {
-      this.$emit("submit_model", true);
+      if (
+        localStorage.getItem("model_nodes") &&
+        localStorage.getItem("model_info")
+      ) {
+        const model_info = JSON.parse(localStorage.getItem("model_info"));
+        const paramslist = {
+          model_name: model_info.model_name,
+          model_type: model_info.model_type,
+          model_detail: model_info.model_detail,
+          model_nodes: localStorage.getItem("model_nodes"),
+          model_edges: localStorage.getItem("edge_list"),
+          create_time: this.getNowTime(),
+          update_time: this.getNowTime(),
+          user_id: this.user_id,
+        };
+        uploadModelAPI(paramslist).then((res) => {
+          if (res.data) {
+            if (res.data.result_code == 1) {
+              this.$notify({
+                title: "提交模型失败",
+                message: `${res.data.result_msg}`,
+                type: "error",
+              });
+            } else {
+              this.$notify({
+                title: "提交模型成功",
+                type: "success",
+              });
+              this.$emit("submit_model", true);
+            }
+          }
+        });
+      }
     },
+  },
+  mounted() {
+    this.model_nodes = JSON.parse(localStorage.getItem("model_nodes"));
+    this.edge_list = JSON.parse(localStorage.getItem("edge_list"));
+    this.user_id = JSON.parse(localStorage.getItem("user_info")).id;
   },
 };
 </script>
@@ -274,6 +335,7 @@ export default {
   background: #ffffff;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
   padding: 30px 40px;
+  transform: scale(0.8);
 }
 .titleline {
   width: 12px;
@@ -308,6 +370,10 @@ export default {
   font-size: 24px;
   font-weight: normal;
   color: rgba(61, 61, 61, 0.5);
+}
+.edgeItem-list {
+  height: 520px;
+  overflow-y: scroll;
 }
 .edgeItem-list > * {
   margin: 0 0 30px 0;
