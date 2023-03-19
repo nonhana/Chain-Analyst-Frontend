@@ -8,7 +8,7 @@
         <span>产业链类型：{{ model_type }}</span>
       </div>
       <div>
-        <span>创建时间：{{ model_create_time }}</span>
+        <span>创建时间：{{ create_time }}</span>
       </div>
       <div>
         <span style="color: #00ff7b"
@@ -25,15 +25,13 @@
 <script>
 export default {
   name: "DetailsInfo",
-  data() {
-    return {
-      model_name: "名称",
-      model_type: "基础化工",
-      model_create_time: "2023-03-14",
-      integrity_score: "100.0",
-      risk_score: "100.0",
-    };
-  },
+  props: [
+    "model_name",
+    "model_type",
+    "create_time",
+    "integrity_score",
+    "risk_score",
+  ],
 };
 </script>
 

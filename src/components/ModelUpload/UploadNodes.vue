@@ -319,6 +319,7 @@ export default {
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
   padding: 30px 40px;
   transform: scale(0.8);
+  margin: -50px 0 0 0;
 }
 .titleline {
   width: 12px;

@@ -149,12 +149,18 @@
       <el-divider></el-divider>
       <el-row type="flex" justify="center" style="width: 100%">
         <div
-          style="width: 1180px; display: flex; justify-content: space-between"
+          style="
+            width: 1180px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+          "
         >
           <div
             v-for="(item, index) in model_list"
             :key="index"
             @click="chaindetails(item.model_id)"
+            style="margin: 0 30px 30px 0"
           >
             <chainItem
               :model_id="item.model_id"
@@ -242,7 +248,7 @@
         </div>
       </div>
 
-      <div class="upload_choices" style="margin: 40px auto 0" @click="push(2)">
+      <div class="upload_choices" style="margin: 40px auto 0" @click="push(3)">
         <div
           style="
             width: 280px;
@@ -359,7 +365,7 @@ export default {
   mounted() {
     getModelListAPI().then((res) => {
       if (res.data) {
-        this.model_list = res.data.model_list;
+        this.model_list = res.data.model_list.reverse();
       }
     });
   },

@@ -51,7 +51,10 @@
       justify="center"
       style="margin: 0 0 0 0"
     >
-      <UploadFiles @submit_model="submit_model" />
+      <UploadFiles
+        @submit_model="submit_model"
+        @accept_file_data="accept_file_data"
+      />
     </el-row>
 
     <el-dialog
@@ -63,18 +66,12 @@
 
       <el-row type="flex" justify="center" style="margin: 30px 0 0 0">
         <div class="picturebox">
-          <!-- <el-image
-            style="height: 350px"
-            :src="model_picture[0]"
-            :preview-src-list="model_picture"
-          >
-          </el-image> -->
           <div id="model" style="height: 500px; width: 100%"></div>
         </div>
       </el-row>
 
       <el-row type="flex" justify="center" style="margin: 30px">
-        <div class="button">
+        <div class="button" @click="chaindetails(model_id)">
           <span>完整性分析+风险评估</span>
         </div>
       </el-row>
@@ -91,12 +88,12 @@ export default {
   name: "upload-index",
   data() {
     return {
+      model_id: 0,
       upload_status: 0,
       dialogVisable: false,
       model_picture: ["https://dummyimage.com/400X400"],
 
       model_nodes: [],
-      model_nodes_labellist: [],
       model_edges: [],
       model_nodes_type: ["n", "m1", "m2", "m3", "m4", "m5", "m6"],
       nodes_type: [
@@ -120,33 +117,61 @@ export default {
     change_upload_status(val) {
       this.upload_status = val;
     },
-    submit_model(val) {
-      this.dialogVisable = val;
-      if (localStorage.getItem("model_nodes")) {
-        const nodes_source = JSON.parse(localStorage.getItem("model_nodes"));
-        this.model_nodes_type.forEach((item, index) => {
-          nodes_source[item].forEach((node) => {
-            const node_item = {
-              name: node.label,
-              category: this.nodes_type[index],
-            };
-            this.model_nodes.push(node_item);
-            this.model_nodes_labellist.push(node_item.name);
-          });
-        });
-      }
-      if (localStorage.getItem("edge_list")) {
-        const edges_source = JSON.parse(localStorage.getItem("edge_list"));
-        edges_source.forEach((item) => {
-          const edge_item = {
-            source: item.start,
-            target: item.end,
-            name: item.name,
+    accept_file_data(model_nodes, model_edges) {
+      const nodes_source = model_nodes;
+      this.model_nodes_type.forEach((item, index) => {
+        nodes_source[item].forEach((node) => {
+          const node_item = {
+            name: node.label,
+            category: this.nodes_type[index],
           };
-          this.model_edges.push(edge_item);
+          this.model_nodes.push(node_item);
         });
+      });
+      // 对节点进行去重
+      this.model_nodes = this.model_nodes.filter((item, index) => {
+        return (
+          this.model_nodes.findIndex((obj) => obj.name === item.name) === index
+        );
+      });
+      const edges_source = model_edges;
+      edges_source.forEach((item) => {
+        const edge_item = {
+          source: item.start,
+          target: item.end,
+          name: item.name,
+        };
+        this.model_edges.push(edge_item);
+      });
+    },
+    submit_model(val, note, model_id) {
+      this.dialogVisable = val;
+      if (!note) {
+        if (localStorage.getItem("model_nodes")) {
+          const nodes_source = JSON.parse(localStorage.getItem("model_nodes"));
+          this.model_nodes_type.forEach((item, index) => {
+            nodes_source[item].forEach((node) => {
+              const node_item = {
+                name: node.label,
+                category: this.nodes_type[index],
+              };
+              this.model_nodes.push(node_item);
+            });
+          });
+        }
+        if (localStorage.getItem("edge_list")) {
+          const edges_source = JSON.parse(localStorage.getItem("edge_list"));
+          edges_source.forEach((item) => {
+            const edge_item = {
+              source: item.start,
+              target: item.end,
+              name: item.name,
+            };
+            this.model_edges.push(edge_item);
+          });
+        }
       }
-      console.log(this.model_edges);
+      this.model_id = model_id;
       this.$nextTick(() => {
         setTimeout(() => {
           this.createCharts();
@@ -273,6 +298,11 @@ export default {
         myChart.resize();
       };
     },
+    chaindetails(model_id) {
+      this.$router.push({
+        path: "/details/" + model_id,
+      });
+    },
   },
   watch: {
     $route: {
@@ -283,7 +313,6 @@ export default {
       immediate: true,
     },
   },
-  mounted() {},
 };
 </script>
 

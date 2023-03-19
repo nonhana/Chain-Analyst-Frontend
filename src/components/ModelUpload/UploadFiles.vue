@@ -5,24 +5,71 @@
       <span class="title" style="margin: 0 0 0 15px">上传产业链数据</span>
     </el-row>
 
+    <el-row class="infoform">
+      <el-row
+        type="flex"
+        justify="space-between"
+        style="width: 700px; align-items: center"
+      >
+        <div>
+          <span>* 产业链模型名称：</span>
+        </div>
+        <div>
+          <el-input
+            v-model="model_info.model_name"
+            placeholder="请输入产业链名称"
+          ></el-input>
+        </div>
+      </el-row>
+
+      <el-row
+        type="flex"
+        justify="space-between"
+        style="width: 700px; align-items: center"
+      >
+        <div>
+          <span>* 产业链模型类型：</span>
+        </div>
+        <div>
+          <el-input
+            v-model="model_info.model_type"
+            placeholder="请输入产业链类型"
+          ></el-input>
+        </div>
+      </el-row>
+
+      <el-row
+        type="flex"
+        justify="space-between"
+        style="width: 700px; align-items: center"
+      >
+        <div>
+          <span>产业链概述：</span>
+        </div>
+        <div>
+          <el-input
+            v-model="model_info.model_detail"
+            placeholder="可选择输入产业链概述，不超过200字"
+            max="200"
+          ></el-input>
+        </div>
+      </el-row>
+    </el-row>
+
     <el-row style="margin: 30px 0 0 0">
       <span class="note"
         >· 请拖曳或选中含有规定格式的产业链txt数据进行上传</span
       >
     </el-row>
-    
+
     <el-row type="flex" justify="center" style="margin: 30px 0 0 0">
-      <el-upload
-        class="upload-demo"
-        drag
-        action="https://jsonplaceholder.typicode.com/posts/"
-        multiple
-        :on-success="handleAvatarSuccess"
+      <vue-dropzone
+        id="txtfile-dropzone"
+        @vdropzone-removed-file="removeFile"
+        @vdropzone-success="uploadFile"
+        :options="dropzoneOptions"
       >
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传txt文件</div>
-      </el-upload>
+      </vue-dropzone>
     </el-row>
 
     <el-row
@@ -149,7 +196,7 @@
       </div>
     </el-row>
 
-    <el-row type="flex" justify="center" style="margin: 30px 0 0 0">
+    <el-row type="flex" justify="center" style="margin: 80px 0 0 0">
       <div class="button" @click="submit_model()">
         <span>提交产业链模型</span>
       </div>
@@ -158,23 +205,116 @@
 </template>
 
 <script>
+import vueDropzone from "vue2-dropzone";
+import "vue2-dropzone/dist/vue2Dropzone.min.css";
+import { uploadModelAPI } from "@/api/model";
 export default {
   name: "UploadFiles",
   data() {
     return {
-      fileURL: [],
+      user_id: JSON.parse(localStorage.getItem("user_info")).id,
+      file_name: "",
       uploaded_file: false,
+      dropzoneOptions: {
+        url: "http://127.0.0.1/model/upload", // 上传文件的URL
+        thumbnailWidth: 150,
+        thumbnailHeight: 150,
+        maxFilesize: 2, // 上传文件的大小限制，单位为MB
+        acceptedFiles: ".txt", // 接受的文件类型
+        dictDefaultMessage: "将文件拖到此处上传", // 默认提示信息
+        dictInvalidFileType: "仅支持txt文件", // 不支持的文件类型提示信息
+        dictFileTooBig: "文件大小不能超过2MB", // 文件过大提示信息
+      },
+      model_nodes: {},
+      model_edges: [],
+      model_info: {
+        model_name: "",
+        model_type: "",
+        model_detail: "",
+      },
     };
   },
   methods: {
-    handleAvatarSuccess(res, file) {
-      let url = URL.createObjectURL(file.raw);
-      this.fileURL.push(url);
-      this.uploaded_file = true;
+    addZero(s) {
+      return s < 10 ? "0" + s : s;
+    },
+    getNowTime() {
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      let time = year + "-" + this.addZero(month) + "-" + this.addZero(day);
+      return time;
+    },
+    removeFile(file) {
+      console.log(file.name + " is removed");
+    },
+    uploadFile(_, res) {
+      if (res.result_code == 0) {
+        this.$notify({
+          title: `${res.result_msg}`,
+          type: "success",
+        });
+        this.uploaded_file = true;
+        this.model_nodes = res.model_nodes;
+        this.model_edges = res.model_edges;
+      }
     },
     submit_model() {
-      this.$emit("submit_model", true);
+      if (
+        this.model_nodes &&
+        this.model_edges &&
+        this.model_info.model_name &&
+        this.model_info.model_type
+      ) {
+        const paramslist = {
+          model_name: this.model_info.model_name,
+          model_type: this.model_info.model_type,
+          model_detail: this.model_info.model_detail,
+          model_nodes: this.model_nodes,
+          model_edges: this.model_edges,
+          create_time: this.getNowTime(),
+          update_time: this.getNowTime(),
+          user_id: this.user_id,
+        };
+        uploadModelAPI(paramslist).then((res) => {
+          if (res.data) {
+            if (res.data.result_code == 1) {
+              this.$notify({
+                title: "提交模型失败",
+                message: `${res.data.result_msg}`,
+                type: "error",
+              });
+            } else {
+              this.$notify({
+                title: "提交模型成功",
+                type: "success",
+              });
+              this.$emit(
+                "accept_file_data",
+                this.model_nodes,
+                this.model_edges
+              );
+              this.$emit(
+                "submit_model",
+                true,
+                "file_upload",
+                res.data.model_id
+              );
+            }
+          }
+        });
+      } else {
+        this.$notify({
+          title: "提交模型失败！",
+          message: "还有必填项没有填好哦~",
+          type: "error",
+        });
+      }
     },
+  },
+  components: {
+    vueDropzone,
   },
 };
 </script>
@@ -186,6 +326,7 @@ export default {
   border-radius: 50px;
   background: #ffffff;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
+  transform: scale(0.8);
   padding: 30px 40px;
 }
 .titleline {
@@ -198,6 +339,21 @@ export default {
   font-size: 36px;
   font-weight: bold;
   color: #3d3d3d;
+}
+.infoform > * {
+  margin: 20px 0 0 20px;
+}
+.infoform span {
+  font-family: Source Han Sans CN;
+  font-size: 24px;
+  font-weight: normal;
+  color: #3d3d3d;
+}
+::v-deep .el-input__inner {
+  width: 400px;
+  height: 60px;
+  background: #ffffff;
+  border-radius: 15px;
 }
 .note {
   font-family: Source Han Sans CN;
@@ -215,6 +371,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: -50px 0 0 0;
   cursor: pointer;
 }
 .button:hover {

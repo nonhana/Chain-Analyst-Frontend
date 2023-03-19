@@ -311,7 +311,7 @@ export default {
                 title: "提交模型成功",
                 type: "success",
               });
-              this.$emit("submit_model", true);
+              this.$emit("submit_model", true, "", res.data.model_id);
             }
           }
         });
@@ -335,6 +335,7 @@ export default {
   background: #ffffff;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
   padding: 30px 40px;
+  margin: -50px 0 0 0;
   transform: scale(0.8);
 }
 .titleline {

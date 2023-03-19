@@ -15,12 +15,7 @@
 <script>
 export default {
   name: "DetailsIntegrity",
-  data() {
-    return {
-      integrity_score: 100.0,
-      integrity_details: "这条产业链的完整性较好，能够进行长期的生产活动！",
-    };
-  },
+  props: ["integrity_score", "integrity_details"],
 };
 </script>
 

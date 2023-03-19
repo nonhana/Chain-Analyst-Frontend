@@ -10,7 +10,7 @@
       <span class="note">当前存在的主要风险：{{ risk_main }}</span>
     </el-row>
     <el-row>
-      <span class="note">规避当前风险的主要措施：{{ risk_action }}</span>
+      <span class="note">规避当前风险的主要措施：{{ risk_method }}</span>
     </el-row>
   </div>
 </template>
@@ -18,13 +18,7 @@
 <script>
 export default {
   name: "DetailsRisk",
-  data() {
-    return {
-      risk_score: 100.0,
-      risk_main: "工人们集体紫砂",
-      risk_action: "让他们玩原神",
-    };
-  },
+  props: ["risk_score", "risk_main", "risk_method"],
 };
 </script>
 
