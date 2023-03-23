@@ -28,6 +28,7 @@
       <DetailsIntegrity
         :integrity_score="integrity_score"
         :integrity_details="integrity_evaluation"
+        :model_id="model_id"
       />
     </el-row>
 

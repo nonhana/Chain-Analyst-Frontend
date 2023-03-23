@@ -10,13 +10,28 @@
       <div>
         <span>创建时间：{{ create_time }}</span>
       </div>
-      <div>
-        <span style="color: #00ff7b"
-          >完整性评估指数：{{ integrity_score }}</span
-        >
-      </div>
-      <div>
-        <span style="color: #00ff7b">综合风险评估指数：{{ risk_score }}</span>
+      <div
+        style="
+          border: 2px solid #9e9e9e;
+          border-radius: 20px;
+          width: max-content;
+          padding: 10px;
+        "
+      >
+        <div style="margin: 0 0 30px 0">
+          <span
+            >完整性评估指数：<span style="color: #00ff7b">{{
+              integrity_score
+            }}</span></span
+          >
+        </div>
+        <div>
+          <span
+            >综合风险评估指数：<span style="color: #00ff7b">
+              {{ risk_score }}
+            </span></span
+          >
+        </div>
       </div>
     </div>
   </div>
@@ -48,7 +63,7 @@ export default {
   align-items: center;
 }
 .infobox > * {
-  margin: 30px 30px;
+  margin: 30px;
 }
 .infobox > * span {
   font-family: Source Han Sans CN;
