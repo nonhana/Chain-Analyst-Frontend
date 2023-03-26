@@ -27,8 +27,10 @@
     <el-row style="margin: 30px 0 0 0" type="flex" justify="center">
       <DetailsIntegrity
         :integrity_score="integrity_score"
-        :integrity_details="integrity_evaluation"
+        :integrity_evaluation="integrity_evaluation"
+        :integrity_info="integrity_info"
         :model_id="model_id"
+        :update_method="update_method"
       />
     </el-row>
 
@@ -58,6 +60,8 @@ export default {
       create_time: "",
       integrity_score: 0,
       integrity_evaluation: "",
+      integrity_info: {},
+      update_method: 0,
       risk_score: 0,
       risk_main: "",
       risk_method: "",
@@ -125,6 +129,8 @@ export default {
           if (res.data) {
             this.integrity_score = res.data.integrity_score;
             this.integrity_evaluation = res.data.integrity_evaluation;
+            this.integrity_info = res.data.integrity_info;
+            this.update_method = res.data.update_method;
           }
         });
         riskAnalyseAPI({ model_id: this.model_id }).then((res) => {

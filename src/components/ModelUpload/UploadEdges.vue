@@ -223,7 +223,7 @@ export default {
   },
   computed: {
     present_num() {
-      return this.edge_list.length;
+      return this.edge_list ? this.edge_list.length : 0;
     },
   },
   components: {
@@ -259,7 +259,7 @@ export default {
     },
     submit_edge() {
       let edge_item = {
-        id: this.edge_list.length,
+        id: this.edge_list ? this.edge_list.length : 0,
         start: this.startnode[0],
         name: this.edge_name,
         end: this.endnode[0],
@@ -297,6 +297,7 @@ export default {
           create_time: this.getNowTime(),
           update_time: this.getNowTime(),
           user_id: this.user_id,
+          update_method: 0,
         };
         uploadModelAPI(paramslist).then((res) => {
           if (res.data) {
@@ -319,8 +320,12 @@ export default {
     },
   },
   mounted() {
-    this.model_nodes = JSON.parse(localStorage.getItem("model_nodes"));
-    this.edge_list = JSON.parse(localStorage.getItem("edge_list"));
+    this.model_nodes = localStorage.getItem("model_nodes")
+      ? JSON.parse(localStorage.getItem("model_nodes"))
+      : {};
+    this.edge_list = localStorage.getItem("edge_list")
+      ? JSON.parse(localStorage.getItem("edge_list"))
+      : [];
     this.user_id = JSON.parse(localStorage.getItem("user_info")).id;
   },
 };

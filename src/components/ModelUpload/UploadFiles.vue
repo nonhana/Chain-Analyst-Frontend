@@ -276,6 +276,7 @@ export default {
           create_time: this.getNowTime(),
           update_time: this.getNowTime(),
           user_id: this.user_id,
+          update_method: 3,
         };
         uploadModelAPI(paramslist).then((res) => {
           if (res.data) {

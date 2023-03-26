@@ -13,7 +13,7 @@
     </el-row>
     <el-row type="flex" justify="space-between" style="width: 95%">
       <div>
-        <span class="note">完整性评价：{{ integrity_details }}</span>
+        <span class="note">完整性评价：{{ integrity_evaluation }}</span>
       </div>
       <div>
         <el-button @click="show_details()">查看分析详情</el-button>
@@ -25,24 +25,61 @@
       class="detailDialog"
       :visible.sync="dialogVisable"
     >
-      <el-row>
-        <div>
-          <span>该模型的各类型节点个数：</span>
-          <span></span>
-        </div>
-      </el-row>
+      <div class="infobox">
+        <el-row>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span>该模型的各类型节点个数：</span>
+            <div>
+              <el-button @click="edit_model(model_id)"
+                >重新编辑 / 上传模型</el-button
+              >
+            </div>
+          </div>
+          <table>
+            <tr v-for="(item, index) in nodes_list" :key="index">
+              <td>{{ item.name }}</td>
+              <td>{{ item.num }}</td>
+            </tr>
+          </table>
+        </el-row>
 
-      <el-row>
-        <span>该模型的边个数：</span>
-      </el-row>
+        <el-row>
+          <div>
+            <span>该模型的边个数：{{ integrity_info.edges_num }}</span>
+          </div>
+        </el-row>
 
-      <el-row>
-        <span>存在问题：</span>
-      </el-row>
+        <el-row>
+          <div>
+            <span>存在问题：</span>
+          </div>
+          <table>
+            <tr
+              v-for="(item, index) in integrity_info.existed_questions"
+              :key="index"
+            >
+              <td>{{ item }}</td>
+            </tr>
+          </table>
+        </el-row>
 
-      <el-row>
-        <span>调整建议：</span>
-      </el-row>
+        <el-row>
+          <div>
+            <span>调整建议：</span>
+          </div>
+          <table>
+            <tr v-for="(item, index) in integrity_info.solutions" :key="index">
+              <td>{{ item }}</td>
+            </tr>
+          </table>
+        </el-row>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -53,6 +90,17 @@ export default {
   data() {
     return {
       dialogVisable: false,
+      label_list: ["n", "m1", "m2", "m3", "m4", "m5", "m6"],
+      name_list: [
+        "所属行业",
+        "附属行业",
+        "子行业",
+        "涉及公司",
+        "主营产品",
+        "产品小类",
+        "涉及材料",
+      ],
+      nodes_list: [],
     };
   },
   methods: {
@@ -60,7 +108,7 @@ export default {
       this.$router.push({
         path: "/upload",
         query: {
-          upload_status: 3,
+          upload_status: this.update_method,
           model_id: id,
         },
       });
@@ -69,7 +117,27 @@ export default {
       this.dialogVisable = true;
     },
   },
-  props: ["integrity_score", "integrity_details", "model_id"],
+  props: [
+    "integrity_score",
+    "integrity_evaluation",
+    "integrity_info",
+    "model_id",
+    "update_method",
+  ],
+  mounted() {
+    setTimeout(() => {
+      this.label_list.forEach((item, index) => {
+        this.nodes_list.push({
+          name: this.name_list[index],
+          num: this.integrity_info.nodes_num[item],
+        });
+      });
+      this.nodes_list.push({
+        name: "总节点个数",
+        num: this.integrity_info.nodes_num["total"],
+      });
+    }, 200);
+  },
 };
 </script>
 
@@ -126,5 +194,30 @@ export default {
   font-size: 18px;
   font-weight: normal;
   color: #9e9e9e;
+}
+.infobox > * {
+  margin: 0 0 30px;
+}
+table {
+  border-collapse: collapse;
+  margin: 10px 0 0 30px;
+  text-align: center;
+}
+table td,
+table th {
+  border: 1px solid #cad9ea;
+  padding: 0 10px;
+  color: #666;
+  height: 30px;
+}
+table thead th {
+  background-color: #cce8eb;
+  width: 100px;
+}
+table tr:nth-child(odd) {
+  background: #fff;
+}
+table tr:nth-child(even) {
+  background: #f5fafa;
 }
 </style>
