@@ -84,6 +84,7 @@ import UploadInfo from "@/components/ModelUpload/UploadInfo.vue";
 import UploadNodes from "@/components/ModelUpload/UploadNodes.vue";
 import UploadEdges from "@/components/ModelUpload/UploadEdges.vue";
 import UploadFiles from "@/components/ModelUpload/UploadFiles.vue";
+import { getModelInfoAPI } from "@/api/model";
 export default {
   name: "upload-index",
   data() {

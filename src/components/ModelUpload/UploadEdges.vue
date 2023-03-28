@@ -191,12 +191,13 @@
 // 导入animate.css动画样式库
 import "animate.css";
 import edgeItem from "../little/edge-item.vue";
-import { uploadModelAPI } from "@/api/model";
+import { uploadModelAPI, updateModalAPI } from "@/api/model";
 export default {
   name: "UploadEdges",
   data() {
     return {
       user_id: 0,
+      model_id: 0,
       edgedialogVisable: false,
       edge_list: [],
 
@@ -287,36 +288,80 @@ export default {
         localStorage.getItem("model_nodes") &&
         localStorage.getItem("model_info")
       ) {
-        const model_info = JSON.parse(localStorage.getItem("model_info"));
-        const paramslist = {
-          model_name: model_info.model_name,
-          model_type: model_info.model_type,
-          model_detail: model_info.model_detail,
-          model_nodes: localStorage.getItem("model_nodes"),
-          model_edges: localStorage.getItem("edge_list"),
-          create_time: this.getNowTime(),
-          update_time: this.getNowTime(),
-          user_id: this.user_id,
-          update_method: 0,
-        };
-        uploadModelAPI(paramslist).then((res) => {
-          if (res.data) {
-            if (res.data.result_code == 1) {
-              this.$notify({
-                title: "提交模型失败",
-                message: `${res.data.result_msg}`,
-                type: "error",
-              });
-            } else {
-              this.$notify({
-                title: "提交模型成功",
-                type: "success",
-              });
-              this.$emit("submit_model", true, "", res.data.model_id);
+        if (!this.$route.query.model_id) {
+          const model_info = JSON.parse(localStorage.getItem("model_info"));
+          const paramslist = {
+            model_name: model_info.model_name,
+            model_type: model_info.model_type,
+            model_detail: model_info.model_detail,
+            model_nodes: localStorage.getItem("model_nodes"),
+            model_edges: localStorage.getItem("edge_list"),
+            create_time: this.getNowTime(),
+            update_time: this.getNowTime(),
+            user_id: this.user_id,
+            update_method: 0,
+          };
+          uploadModelAPI(paramslist).then((res) => {
+            if (res.data) {
+              if (res.data.result_code == 1) {
+                this.$notify({
+                  title: "提交模型失败",
+                  message: `${res.data.result_msg}`,
+                  type: "error",
+                });
+              } else {
+                this.$notify({
+                  title: "提交模型成功",
+                  type: "success",
+                });
+                this.$emit("submit_model", true, "", this.model_id);
+              }
             }
-          }
-        });
+          });
+        } else {
+          const model_info = JSON.parse(localStorage.getItem("model_info"));
+          const paramslist = {
+            model_id: this.model_id,
+            model_name: model_info.model_name,
+            model_type: model_info.model_type,
+            model_detail: model_info.model_detail,
+            model_nodes: localStorage.getItem("model_nodes"),
+            model_edges: localStorage.getItem("edge_list"),
+            update_time: this.getNowTime(),
+            user_id: this.user_id,
+            update_method: 0,
+          };
+          updateModalAPI(paramslist).then((res) => {
+            if (res.data) {
+              if (res.data.result_code == 1) {
+                this.$notify({
+                  title: "更新模型失败",
+                  message: `${res.data.result_msg}`,
+                  type: "error",
+                });
+              } else {
+                this.$notify({
+                  title: "更新模型成功",
+                  type: "success",
+                });
+                localStorage.removeItem('model_nodes')
+                localStorage.removeItem('edge_list')
+                localStorage.removeItem('model_info')
+                this.$emit("submit_model", true, "", this.model_id);
+              }
+            }
+          });
+        }
       }
+    },
+  },
+  watch: {
+    $route: {
+      handler: function (newV, _) {
+        this.model_id = newV.query.model_id ? Number(newV.query.model_id) : 0;
+      },
+      immediate: true,
+      deep: true,
     },
   },
   mounted() {

@@ -26,20 +26,14 @@
       :visible.sync="dialogVisable"
     >
       <div class="infobox">
-        <el-row>
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            "
+        <div style="position: absolute; right: 20px; top: 80px">
+          <el-button @click="edit_model(model_id)"
+            >重新编辑 / 上传模型</el-button
           >
+        </div>
+        <el-row type="flex">
+          <div>
             <span>该模型的各类型节点个数：</span>
-            <div>
-              <el-button @click="edit_model(model_id)"
-                >重新编辑 / 上传模型</el-button
-              >
-            </div>
           </div>
           <table>
             <tr v-for="(item, index) in nodes_list" :key="index">
@@ -49,13 +43,18 @@
           </table>
         </el-row>
 
-        <el-row>
+        <el-row type="flex">
           <div>
-            <span>该模型的边个数：{{ integrity_info.edges_num }}</span>
+            <span>该模型的边个数：</span>
           </div>
+          <table>
+            <tr>
+              <td>{{ integrity_info.edges_num }}</td>
+            </tr>
+          </table>
         </el-row>
 
-        <el-row>
+        <el-row type="flex">
           <div>
             <span>存在问题：</span>
           </div>
@@ -69,7 +68,7 @@
           </table>
         </el-row>
 
-        <el-row>
+        <el-row type="flex">
           <div>
             <span>调整建议：</span>
           </div>
@@ -85,6 +84,7 @@
 </template>
 
 <script>
+import { getModelInfoAPI } from "@/api/model";
 export default {
   name: "DetailsIntegrity",
   data() {
@@ -105,12 +105,30 @@ export default {
   },
   methods: {
     edit_model(id) {
-      this.$router.push({
-        path: "/upload",
-        query: {
-          upload_status: this.update_method,
-          model_id: id,
-        },
+      getModelInfoAPI({ model_id: this.model_id }).then((res) => {
+        if (res.data.model_data) {
+          const model_info = {
+            model_name: res.data.model_data.model_name,
+            model_type: res.data.model_data.model_type,
+            model_detail: res.data.model_data.model_detail,
+          };
+          localStorage.setItem("model_info", JSON.stringify(model_info));
+          if (res.data.model_data.update_method == 0) {
+            localStorage.setItem(
+              "model_nodes",
+              res.data.model_data.model_nodes
+            );
+            localStorage.setItem("edge_list", res.data.model_data.model_edges);
+          }
+        }
+        this.$emit("edit_model", true);
+        this.$router.push({
+          path: "/upload",
+          query: {
+            upload_status: this.update_method,
+            model_id: id,
+          },
+        });
       });
     },
     show_details() {
@@ -200,7 +218,7 @@ export default {
 }
 table {
   border-collapse: collapse;
-  margin: 10px 0 0 30px;
+  margin: 0 0 0 30px;
   text-align: center;
 }
 table td,

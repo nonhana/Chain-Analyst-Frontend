@@ -5,9 +5,9 @@ module.exports = defineConfig({
   devServer: {
     host: '0.0.0.0',
     // https:true,
-    port: 9000,
+    port: 7000,
     client: {
-      webSocketURL: 'ws://0.0.0.0:9000/ws',
+      webSocketURL: 'ws://0.0.0.0:7000/ws',
     },
   },
   runtimeCompiler: true,

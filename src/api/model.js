@@ -44,3 +44,12 @@ export function riskAnalyseAPI(paramsList) {
     params: paramsList
   })
 }
+
+// 更新模型
+export function updateModalAPI(paramsList) {
+  return myAxios({
+    url: '/model/update',
+    method: 'post',
+    data: paramsList
+  })
+}

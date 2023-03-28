@@ -31,6 +31,7 @@
         :integrity_info="integrity_info"
         :model_id="model_id"
         :update_method="update_method"
+        @edit_model="edit_model"
       />
     </el-row>
 
@@ -54,6 +55,7 @@ export default {
   name: "details-index",
   data() {
     return {
+      edit_status: false,
       model_id: this.$route.params.id,
       model_name: "",
       model_type: "",
@@ -78,6 +80,11 @@ export default {
         "涉及材料",
       ],
     };
+  },
+  methods: {
+    edit_model(val) {
+      this.edit_status = val;
+    },
   },
   components: {
     DetailsImg,
@@ -142,6 +149,14 @@ export default {
         });
       }
     });
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.edit_status) {
+      localStorage.removeItem("model_nodes");
+      localStorage.removeItem("edge_list");
+      localStorage.removeItem("model_info");
+    }
+    next(true);
   },
 };
 </script>

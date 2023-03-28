@@ -169,6 +169,17 @@
               :model_picture="item.model_picture"
             />
           </div>
+          <!-- 占位区域 -->
+          <div
+            style="
+              width: 230px;
+              border-radius: 20px;
+              padding: 15px;
+              margin: 0 30px 30px 0;
+            "
+            v-for="item in new Array(4 - (((model_list.length - 1) % 4) + 1))"
+            :key="item"
+          ></div>
         </div>
       </el-row>
     </el-row>
