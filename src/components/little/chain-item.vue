@@ -23,20 +23,14 @@
 <script>
 export default {
   name: "chainItem",
-  // data() {
-  //   return {
-  //     chain_name: "产业链名称",
-  //     chain_introduction: "产业链简介产业链简介产业链简介产业链简介产业链简介",
-  //     chain_picture: "https://dummyimage.com/400X400",
-  //   };
-  // },
-  props: ["model_id","model_name", "model_detail", "model_picture"],
+  props: ["model_id", "model_name", "model_detail", "model_picture"],
 };
 </script>
 
 <style scoped>
 .chain-item-wrap {
   width: 230px;
+  height: 120px;
   border-radius: 20px;
   background: #ffffff;
   transition: all 0.3s ease;
@@ -72,7 +66,7 @@ export default {
   align-items: center;
 }
 .imgbox img {
-  height: 120px;
+  height: 140px;
   border-radius: 20px;
 }
 </style>

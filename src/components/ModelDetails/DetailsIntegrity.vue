@@ -13,7 +13,14 @@
     </el-row>
     <el-row type="flex" justify="space-between" style="width: 95%">
       <div>
-        <span class="note">完整性评价：{{ integrity_evaluation }}</span>
+        <span class="note"
+          >完整性评价：<span
+            :style="{
+              color: detail_color,
+            }"
+            >{{ integrity_evaluation }}</span
+          ></span
+        >
       </div>
       <div>
         <el-button @click="show_details()">查看分析详情</el-button>
@@ -49,7 +56,7 @@
           </div>
           <table>
             <tr>
-              <td>{{ integrity_info.edges_num }}</td>
+              <td>{{ integrity_msg.edges_num }}</td>
             </tr>
           </table>
         </el-row>
@@ -58,12 +65,17 @@
           <div>
             <span>存在问题：</span>
           </div>
-          <table>
+          <table v-if="integrity_msg.existed_questions.length != 0">
             <tr
-              v-for="(item, index) in integrity_info.existed_questions"
+              v-for="(item, index) in integrity_msg.existed_questions"
               :key="index"
             >
               <td>{{ item }}</td>
+            </tr>
+          </table>
+          <table v-if="integrity_msg.existed_questions.length == 0">
+            <tr>
+              <td>暂未发现该模型的缺点</td>
             </tr>
           </table>
         </el-row>
@@ -72,9 +84,14 @@
           <div>
             <span>调整建议：</span>
           </div>
-          <table>
-            <tr v-for="(item, index) in integrity_info.solutions" :key="index">
+          <table v-if="integrity_msg.solutions.length != 0">
+            <tr v-for="(item, index) in integrity_msg.solutions" :key="index">
               <td>{{ item }}</td>
+            </tr>
+          </table>
+          <table v-if="integrity_msg.solutions.length == 0">
+            <tr>
+              <td>该模型暂不需要调整</td>
             </tr>
           </table>
         </el-row>
@@ -90,6 +107,7 @@ export default {
   data() {
     return {
       dialogVisable: false,
+      // detail_color: "#3d3d3d",
       label_list: ["n", "m1", "m2", "m3", "m4", "m5", "m6"],
       name_list: [
         "所属行业",
@@ -102,6 +120,24 @@ export default {
       ],
       nodes_list: [],
     };
+  },
+  computed: {
+    detail_color() {
+      if (this.integrity_score >= 80) {
+        return "#00ff7b";
+      } else if (this.integrity_score >= 60) {
+        return "skyblue";
+      } else if (this.integrity_score >= 40) {
+        return "#ff8200";
+      } else if (this.integrity_score >= 20) {
+        return "#e200cc";
+      } else {
+        return "red";
+      }
+    },
+    integrity_msg() {
+      return this.integrity_info;
+    },
   },
   methods: {
     edit_model(id) {

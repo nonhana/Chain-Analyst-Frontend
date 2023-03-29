@@ -314,7 +314,7 @@ export default {
                   title: "提交模型成功",
                   type: "success",
                 });
-                this.$emit("submit_model", true, "", this.model_id);
+                this.$emit("submit_model", true, "", res.data.model_id);
               }
             }
           });
@@ -344,9 +344,9 @@ export default {
                   title: "更新模型成功",
                   type: "success",
                 });
-                localStorage.removeItem('model_nodes')
-                localStorage.removeItem('edge_list')
-                localStorage.removeItem('model_info')
+                localStorage.removeItem("model_nodes");
+                localStorage.removeItem("edge_list");
+                localStorage.removeItem("model_info");
                 this.$emit("submit_model", true, "", this.model_id);
               }
             }

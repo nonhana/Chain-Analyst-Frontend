@@ -53,3 +53,21 @@ export function updateModalAPI(paramsList) {
     data: paramsList
   })
 }
+
+// 将产业链的拓扑结构图数据存储到后端
+export function savePictureAPI(paramsList) {
+  return myAxios({
+    url: '/model/savepicture',
+    method: 'post',
+    data: paramsList
+  })
+}
+
+// 更新模型的封面图片
+export function updateModelCoverAPI(paramsList) {
+  return myAxios({
+    url: '/model/updatecover',
+    method: 'post',
+    data: paramsList
+  })
+}

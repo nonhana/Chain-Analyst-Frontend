@@ -14,6 +14,12 @@ export default {
       let myChart = this.$echarts.init(document.getElementById("model"));
       let option = {
         backgroundColor: "#EEF1F3",
+        toolbox: {
+          feature: {
+            saveAsImage: {},
+            magicType: { type: ["force", "chord"] },
+          },
+        },
         color: [
           "#ee6666",
           "#91cc75",

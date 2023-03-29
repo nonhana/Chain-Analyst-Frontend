@@ -84,7 +84,7 @@ import UploadInfo from "@/components/ModelUpload/UploadInfo.vue";
 import UploadNodes from "@/components/ModelUpload/UploadNodes.vue";
 import UploadEdges from "@/components/ModelUpload/UploadEdges.vue";
 import UploadFiles from "@/components/ModelUpload/UploadFiles.vue";
-import { getModelInfoAPI } from "@/api/model";
+import { savePictureAPI, updateModelCoverAPI } from "@/api/model";
 export default {
   name: "upload-index",
   data() {
@@ -93,6 +93,7 @@ export default {
       upload_status: 0,
       dialogVisable: false,
       model_picture: ["https://dummyimage.com/400X400"],
+      imgData: "",
 
       model_nodes: [],
       model_edges: [],
@@ -176,6 +177,21 @@ export default {
       this.$nextTick(() => {
         setTimeout(() => {
           this.createCharts();
+          savePictureAPI({
+            model_id: model_id,
+            img_data: this.imgData,
+          }).then((res) => {
+            if (res.data) {
+              // console.log(res.data);
+              const img_url = res.data.img_url;
+              updateModelCoverAPI({
+                img_url: img_url,
+                model_id: model_id,
+              }).then((res) => {
+                console.log(res.data);
+              });
+            }
+          });
         }, 500);
       });
     },
@@ -298,6 +314,12 @@ export default {
       window.onresize = function () {
         myChart.resize();
       };
+      this.imgData = myChart.getConnectedDataURL({
+        type: "png",
+        backgroundColor: "#fff",
+        pixelRatio: 1,
+        excludeComponents: ["toolbox"], // 不包含工具栏
+      });
     },
     chaindetails(model_id) {
       this.$router.push({
