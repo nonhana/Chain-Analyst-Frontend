@@ -32,7 +32,18 @@ const routes = [
     path: "/details/:id",
     name: "details",
     component: () => import('@/views/details/index.vue')
-  }
+  },
+  {
+    path: '/personalCenter/:id',
+    name: 'personalCenter',
+    redirect: "/MyInfo/:id",
+    component: () => import('../views/personalCenter/index.vue'),
+    children: [{
+      path: '/MyInfo/:id',
+      name: 'MyInfo',
+      component: () => import('../components/ModelPersonalCenter/MyInfo.vue'),
+    }]
+  },
 ]
 
 const router = new VueRouter({

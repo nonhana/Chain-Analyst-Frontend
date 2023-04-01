@@ -1,7 +1,16 @@
 <template>
   <div name="RegisterWindow" class="RegisterWindow-wrap">
-    <el-row type="flex" justify="center" style="width: 100%">
-      <span class="title">注册</span>
+    <el-row
+      type="flex"
+      justify="start"
+      style="width: 100%; align-items: center"
+    >
+      <div @click="login()" class="return_button" style="margin: 0 50px 0 0">
+        <span>返回</span>
+      </div>
+      <div>
+        <span class="title">注册</span>
+      </div>
     </el-row>
     <el-divider></el-divider>
     <div style="margin: 0 0 0 5px">
@@ -107,6 +116,9 @@ export default {
         });
       }
     },
+    login() {
+      this.$emit("return_login", true);
+    },
   },
 };
 </script>
@@ -169,6 +181,28 @@ export default {
   box-shadow: inset 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
 }
 .button span {
+  width: 40px;
+  height: 29px;
+  font-family: Source Han Sans CN;
+  font-size: 20px;
+  font-weight: normal;
+  color: #ffffff;
+}
+.return_button {
+  width: 100px;
+  height: 40px;
+  border-radius: 10px;
+  background: #00ff7b;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.return_button:hover {
+  box-shadow: inset 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
+}
+.return_button span {
   width: 40px;
   height: 29px;
   font-family: Source Han Sans CN;

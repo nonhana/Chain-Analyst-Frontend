@@ -79,7 +79,7 @@
       </svg>
     </div>
 
-    <div class="userhead">
+    <div class="userhead" @click="push(1)">
       <img :src="userhead" alt="" />
     </div>
   </div>
@@ -91,6 +91,7 @@ export default {
   data() {
     return {
       userhead: "https://dummyimage.com/400X400",
+      user_id: 0,
     };
   },
   methods: {
@@ -100,7 +101,18 @@ export default {
           name: "home",
         });
       }
+      if (num == 1) {
+        this.$router.push({
+          path: "/personalCenter/" + this.user_id,
+        });
+      }
     },
+  },
+  mounted() {
+    if (localStorage.getItem("user_info")) {
+      this.userhead = JSON.parse(localStorage.getItem("user_info")).head_photo;
+      this.user_id = JSON.parse(localStorage.getItem("user_info")).id;
+    }
   },
 };
 </script>

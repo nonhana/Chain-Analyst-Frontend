@@ -374,7 +374,9 @@ export default {
     chainItem,
   },
   mounted() {
-    getModelListAPI().then((res) => {
+    getModelListAPI({
+      user_id: JSON.parse(localStorage.getItem("user_info")).id,
+    }).then((res) => {
       if (res.data) {
         this.model_list = res.data.model_list.reverse();
       }
