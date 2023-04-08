@@ -14,6 +14,7 @@
         type="flex"
         justify="space-between"
         style="width: 600px; align-items: center"
+        class="inputbox"
       >
         <span>所属行业</span>
         <el-select
@@ -41,6 +42,7 @@
         type="flex"
         justify="space-between"
         style="width: 600px; align-items: center"
+        class="inputbox"
       >
         <span>附属行业</span>
         <el-select
@@ -51,7 +53,7 @@
           filterable
           allow-create
           default-first-option
-          placeholder="请输入所属行业"
+          placeholder="请输入附属行业"
           style="width: 400px"
         >
           <el-option
@@ -68,6 +70,7 @@
         type="flex"
         justify="space-between"
         style="width: 600px; align-items: center"
+        class="inputbox"
       >
         <span>子行业</span>
         <el-select
@@ -78,7 +81,7 @@
           filterable
           allow-create
           default-first-option
-          placeholder="请输入所属行业"
+          placeholder="请输入子行业"
           style="width: 400px"
         >
           <el-option
@@ -95,6 +98,7 @@
         type="flex"
         justify="space-between"
         style="width: 600px; align-items: center"
+        class="inputbox"
       >
         <span>涉及公司</span>
         <el-select
@@ -105,7 +109,7 @@
           filterable
           allow-create
           default-first-option
-          placeholder="请输入所属行业"
+          placeholder="请输入涉及公司"
           style="width: 400px"
         >
           <el-option
@@ -122,6 +126,7 @@
         type="flex"
         justify="space-between"
         style="width: 600px; align-items: center"
+        class="inputbox"
       >
         <span>主营产品</span>
         <el-select
@@ -132,7 +137,7 @@
           filterable
           allow-create
           default-first-option
-          placeholder="请输入所属行业"
+          placeholder="请输入主营产品"
           style="width: 400px"
         >
           <el-option
@@ -149,6 +154,7 @@
         type="flex"
         justify="space-between"
         style="width: 600px; align-items: center"
+        class="inputbox"
       >
         <span>产品小类</span>
         <el-select
@@ -159,7 +165,7 @@
           filterable
           allow-create
           default-first-option
-          placeholder="请输入所属行业"
+          placeholder="请输入产品小类"
           style="width: 400px"
         >
           <el-option
@@ -176,6 +182,7 @@
         type="flex"
         justify="space-between"
         style="width: 600px; align-items: center"
+        class="inputbox"
       >
         <span>涉及材料</span>
         <el-select
@@ -186,7 +193,7 @@
           filterable
           allow-create
           default-first-option
-          placeholder="请输入所属行业"
+          placeholder="请输入涉及材料"
           style="width: 400px"
         >
           <el-option
@@ -309,7 +316,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .UploadNodes-wrap {
   position: relative;
   width: 1170px;

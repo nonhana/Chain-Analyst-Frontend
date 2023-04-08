@@ -118,7 +118,8 @@
 
     <el-row
       style="
-        width: 100%;
+        left: 5%;
+        width: 90%;
         margin: 60px 0 0 0;
         border: 2px solid #9e9e9e;
         border-radius: 20px;

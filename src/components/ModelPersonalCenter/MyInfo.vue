@@ -403,6 +403,7 @@ export default {
   background: #ffffff;
   border-radius: 10px;
   padding: 20px 20px 30px;
+  margin: 0 100px;
 }
 .titleline {
   width: 10px;

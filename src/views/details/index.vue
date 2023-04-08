@@ -40,6 +40,7 @@
         :risk_score="risk_score"
         :risk_main="risk_main"
         :risk_method="risk_method"
+        :risk_scorelist="risk_scorelist"
       />
     </el-row>
   </div>
@@ -67,6 +68,7 @@ export default {
       risk_score: 0,
       risk_main: "",
       risk_method: "",
+      risk_scorelist:[],
       model_nodes: [],
       model_edges: [],
       model_nodes_type: ["n", "m1", "m2", "m3", "m4", "m5", "m6"],
@@ -145,6 +147,7 @@ export default {
             this.risk_score = res.data.risk_score;
             this.risk_main = res.data.risk_main;
             this.risk_method = res.data.risk_method;
+            this.risk_scorelist = res.data.risk_scorelist;
           }
         });
       }

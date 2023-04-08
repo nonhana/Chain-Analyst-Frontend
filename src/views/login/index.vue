@@ -55,8 +55,8 @@ export default {
 }
 .window {
   position: absolute;
-  left: 850px;
-  top: 150px;
+  right: 10%;
+  top: 15%;
 }
 
 .window-leave,

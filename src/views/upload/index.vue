@@ -8,7 +8,7 @@
         v-if="upload_status == 0"
         type="flex"
         justify="center"
-        style="margin: 0 0 0 50px; position: absolute"
+        style="margin: 0 auto; position: relative"
       >
         <UploadInfo @change_upload_status="change_upload_status" />
       </el-row>
@@ -22,7 +22,7 @@
         v-if="upload_status == 1"
         type="flex"
         justify="center"
-        style="margin: 0 0 0 50px; position: absolute"
+        style="margin: 0 auto; position: relative"
       >
         <UploadNodes @change_upload_status="change_upload_status" />
       </el-row>
@@ -36,7 +36,7 @@
         v-if="upload_status == 2"
         type="flex"
         justify="center"
-        style="margin: 0 0 0 50px; position: absolute"
+        style="margin: 0 auto; position: relative"
       >
         <UploadEdges
           @change_upload_status="change_upload_status"

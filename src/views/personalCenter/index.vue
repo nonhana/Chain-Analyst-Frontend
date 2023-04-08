@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <el-row type="flex" justify="center">
-      <PersonalHeaderVue />
+      <PersonalHeaderVue style="margin: 30px 100px" />
     </el-row>
     <el-row type="flex" justify="center" style="margin: 40px 0 30px 0">
       <router-view></router-view>
