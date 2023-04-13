@@ -4,12 +4,7 @@
       enter-active-class="animate__animated animate__backInUp"
       leave-active-class="animate__animated animate__backOutDown"
     >
-      <el-row
-        v-if="upload_status == 0"
-        type="flex"
-        justify="center"
-        style="margin: 0 auto; position: relative"
-      >
+      <el-row v-if="upload_status == 0" type="flex" justify="center">
         <UploadInfo @change_upload_status="change_upload_status" />
       </el-row>
     </transition>
@@ -18,12 +13,7 @@
       enter-active-class="animate__animated animate__backInUp"
       leave-active-class="animate__animated animate__backOutDown"
     >
-      <el-row
-        v-if="upload_status == 1"
-        type="flex"
-        justify="center"
-        style="margin: 0 auto; position: relative"
-      >
+      <el-row v-if="upload_status == 1" type="flex" justify="center">
         <UploadNodes @change_upload_status="change_upload_status" />
       </el-row>
     </transition>
@@ -32,12 +22,7 @@
       enter-active-class="animate__animated animate__backInDown"
       leave-active-class="animate__animated animate__backOutUp"
     >
-      <el-row
-        v-if="upload_status == 2"
-        type="flex"
-        justify="center"
-        style="margin: 0 auto; position: relative"
-      >
+      <el-row v-if="upload_status == 2" type="flex" justify="center">
         <UploadEdges
           @change_upload_status="change_upload_status"
           @submit_model="submit_model"
@@ -62,14 +47,12 @@
       class="uploadDialog"
       :visible.sync="dialogVisable"
     >
-      <el-divider> <span class="dialogtitle">拓扑结构图</span></el-divider>
-
+      <el-divider><span class="dialogtitle">拓扑结构图</span></el-divider>
       <el-row type="flex" justify="center" style="margin: 30px 0 0 0">
         <div class="picturebox">
           <div id="model" style="height: 500px; width: 100%"></div>
         </div>
       </el-row>
-
       <el-row type="flex" justify="center" style="margin: 30px">
         <div class="button" @click="chaindetails(model_id)">
           <span>完整性分析+风险评估</span>
@@ -182,13 +165,10 @@ export default {
             img_data: this.imgData,
           }).then((res) => {
             if (res.data) {
-              // console.log(res.data);
               const img_url = res.data.img_url;
               updateModelCoverAPI({
                 img_url: img_url,
                 model_id: model_id,
-              }).then((res) => {
-                console.log(res.data);
               });
             }
           });

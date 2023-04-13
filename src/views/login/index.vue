@@ -1,7 +1,21 @@
 <template>
   <div class="index">
+    <div
+      class="title"
+      :style="{
+        opacity: title_opacity,
+      }"
+    >
+      <img src="../../assets/images/chainAnalyst.png" alt="" />
+    </div>
     <transition name="window">
-      <div v-show="login_status" class="window">
+      <div
+        v-show="login_status"
+        class="window"
+        :style="{
+          opacity: window_opacity,
+        }"
+      >
         <LoginWindow @return_register="return_register" />
       </div>
     </transition>
@@ -22,6 +36,8 @@ export default {
   data() {
     return {
       login_status: true,
+      title_opacity: "0%",
+      window_opacity: "0%",
     };
   },
   methods: {
@@ -31,6 +47,14 @@ export default {
     return_login(val) {
       this.login_status = val;
     },
+  },
+  mounted() {
+    setTimeout(()=>{
+      this.title_opacity = "100%"
+    },100)
+    setTimeout(() => {
+      this.window_opacity = "100%";
+    }, 600);
   },
   components: { LoginWindow, RegisterWindow },
 };
@@ -52,11 +76,19 @@ export default {
     #99cccc 240px,
     #eea2a2 300px
   );
+  margin: 0;
+}
+.title {
+  position: absolute;
+  right: 11%;
+  top: 10%;
+  transition: all 0.5s ease;
 }
 .window {
   position: absolute;
   right: 10%;
-  top: 15%;
+  top: 25%;
+  transition: all 0.5s ease;
 }
 
 .window-leave,

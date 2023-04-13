@@ -39,6 +39,8 @@
         :startnode="item.start"
         :edgename="item.name"
         :endnode="item.end"
+        :starttype="item.starttype"
+        :endtype="item.endtype"
         @edit_item="edit_item"
         @delete_item="delete_item"
       />
@@ -102,6 +104,7 @@
               default-first-option
               placeholder="选择具体节点"
               style="width: 150px"
+              @change="selectChange"
             >
               <el-option
                 v-for="item in start_nodes_list"
@@ -188,7 +191,6 @@
 </template>
 
 <script>
-// 导入animate.css动画样式库
 import "animate.css";
 import edgeItem from "../little/edge-item.vue";
 import { uploadModelAPI, updateModalAPI } from "@/api/model";
@@ -196,6 +198,8 @@ export default {
   name: "UploadEdges",
   data() {
     return {
+      edit_status: 0,
+      edit_edgeid: -1,
       user_id: 0,
       model_id: 0,
       edgedialogVisable: false,
@@ -246,34 +250,95 @@ export default {
       this.$emit("change_upload_status", num);
     },
     upload_new_edge() {
+      this.start_type = "请选择";
+      this.end_type = "请选择";
+      this.startnode = [];
+      this.endnode = [];
+      this.edge_name = "";
       this.edgedialogVisable = true;
     },
     chooseStartType(val) {
+      if (val != this.start_type) {
+        this.startnode = [];
+      }
       this.start_type = val;
       const index = this.node_type.indexOf(this.start_type);
       this.start_nodes_list = this.model_nodes[this.model_nodes_type[index]];
     },
     chooseEndType(val) {
+      if (val != this.end_type) {
+        this.endnode = [];
+      }
       this.end_type = val;
       const index = this.node_type.indexOf(this.end_type);
       this.end_nodes_list = this.model_nodes[this.model_nodes_type[index]];
+      this.endnode = [];
     },
     submit_edge() {
-      let edge_item = {
-        id: this.edge_list ? this.edge_list.length : 0,
-        start: this.startnode[0],
-        name: this.edge_name,
-        end: this.endnode[0],
-      };
-      this.edge_list.push(edge_item);
-      this.edgedialogVisable = false;
-      localStorage.setItem("edge_list", JSON.stringify(this.edge_list));
-      this.$notify({
-        title: "添加成功",
-        type: "success",
-      });
+      if (this.edit_status == 0) {
+        let edge_item = {
+          id: this.edge_list ? this.edge_list.length : 0,
+          start: this.startnode[0],
+          name: this.edge_name,
+          end: this.endnode[0],
+          starttype: this.start_type,
+          endtype: this.end_type,
+        };
+        let flag = false;
+        this.edge_list.forEach((item) => {
+          if (item.start == edge_item.start && item.end == edge_item.end) {
+            flag = true;
+          }
+        });
+        if (!flag) {
+          this.edge_list.push(edge_item);
+          this.edgedialogVisable = false;
+          localStorage.setItem("edge_list", JSON.stringify(this.edge_list));
+          this.$notify({
+            title: "添加成功",
+            type: "success",
+          });
+        } else {
+          this.$notify({
+            title: "添加失败",
+            message: "不可重复添加相同的边！",
+            type: "error",
+          });
+        }
+      } else {
+        let edge_item = {
+          id: this.edit_edgeid,
+          start: this.startnode[0],
+          name: this.edge_name,
+          end: this.endnode[0],
+          starttype: this.start_type,
+          endtype: this.end_type,
+        };
+        this.edge_list.forEach((item) => {
+          if (item.id == edge_item.id) {
+            item.start = edge_item.start;
+            item.name = edge_item.name;
+            item.end = edge_item.end;
+            item.starttype = edge_item.starttype;
+            item.endtype = edge_item.endtype;
+          }
+        });
+        this.edgedialogVisable = false;
+        localStorage.setItem("edge_list", JSON.stringify(this.edge_list));
+        this.$notify({
+          title: "修改成功",
+          type: "success",
+        });
+      }
     },
-    edit_item(val) {
+    edit_item(edge_info) {
+      this.edit_edgeid = edge_info.edge_id;
+      this.startnode = [edge_info.startnode];
+      this.edge_name = edge_info.edge_name;
+      this.endnode = [edge_info.endnode];
+      this.start_type = edge_info.start_type;
+      this.end_type = edge_info.end_type;
+      this.edit_status = 1;
       this.edgedialogVisable = true;
     },
     delete_item(val) {
@@ -281,6 +346,11 @@ export default {
         if (item.id == val) {
           this.edge_list.splice(index, 1);
         }
+        localStorage.setItem("edge_list", JSON.stringify(this.edge_list));
+      });
+      this.$notify({
+        title: "删除成功！",
+        type: "success",
       });
     },
     submit_model() {
@@ -344,14 +414,21 @@ export default {
                   title: "更新模型成功",
                   type: "success",
                 });
-                localStorage.removeItem("model_nodes");
-                localStorage.removeItem("edge_list");
-                localStorage.removeItem("model_info");
                 this.$emit("submit_model", true, "", this.model_id);
               }
             }
           });
         }
+      }
+    },
+    selectChange() {
+      if (this.startnode.length > 1) {
+        this.$message.warning("添加边的时候只能选择一个起始节点哦");
+        this.startnode.splice(-1);
+      }
+      if (this.endnode.length > 1) {
+        this.$message.warning("添加边的时候只能选择一个起始节点哦");
+        this.endnode.splice(-1);
       }
     },
   },
@@ -423,7 +500,7 @@ export default {
   color: rgba(61, 61, 61, 0.5);
 }
 .edgeItem-list {
-  height: 520px;
+  max-height: 520px;
   overflow-y: scroll;
 }
 .edgeItem-list > * {

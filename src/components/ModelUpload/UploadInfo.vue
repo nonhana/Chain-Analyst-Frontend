@@ -16,7 +16,7 @@
         style="width: 700px; align-items: center"
       >
         <div>
-          <span>* 产业链模型名称：</span>
+          <span><span style="color: red">*</span>&nbsp;产业链模型名称：</span>
         </div>
         <div>
           <el-input
@@ -32,7 +32,7 @@
         style="width: 700px; align-items: center"
       >
         <div>
-          <span>* 产业链模型类型：</span>
+          <span><span style="color: red">*</span>&nbsp;产业链模型类型：</span>
         </div>
         <div>
           <el-input
@@ -48,7 +48,7 @@
         style="width: 700px; align-items: center"
       >
         <div>
-          <span>产业链概述：</span>
+          <span>&nbsp;&nbsp;产业链概述：</span>
         </div>
         <div>
           <el-input

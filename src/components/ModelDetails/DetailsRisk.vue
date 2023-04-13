@@ -5,7 +5,20 @@
         <span class="title">风险评估</span>
       </el-row>
       <el-row>
-        <span class="note">综合指数：{{ risk_score }}</span>
+        <span class="note"
+          >综合指数：
+          <span
+            :style="{
+              display: display_status,
+            }"
+          >
+            {{
+              this.integrity_score > 85
+                ? 100 - (100 - this.risk_score) / 2
+                : this.risk_score
+            }}
+          </span>
+        </span>
       </el-row>
       <el-row>
         <span class="note">当前存在的主要风险：{{ risk_main }}</span>
@@ -26,6 +39,13 @@
 <script>
 export default {
   name: "DetailsRisk",
+  data() {
+    return {
+      integrity_score: 0,
+      display_status: "none",
+      chain_scorelist: [],
+    };
+  },
   props: ["risk_score", "risk_main", "risk_method", "risk_scorelist"],
   methods: {
     createCharts() {
@@ -50,22 +70,36 @@ export default {
             type: "radar",
             data: [
               {
-                value: this.risk_scorelist,
+                value:
+                  this.integrity_score > 85
+                    ? this.chain_scorelist
+                    : this.risk_scorelist,
               },
             ],
           },
         ],
       };
-
       option && chartInstance.setOption(option);
     },
   },
   mounted() {
     this.$nextTick(() => {
       setTimeout(() => {
+        if (localStorage.getItem("integrity_score")) {
+          this.integrity_score = localStorage.getItem("integrity_score");
+        }
+        if (this.integrity_score > 85) {
+          this.risk_scorelist.forEach((item) => {
+            this.chain_scorelist.push(item / 2);
+          });
+        }
+        this.display_status = "";
         this.createCharts();
       }, 500);
     });
+  },
+  beforeDestroy() {
+    localStorage.removeItem("integrity_score");
   },
 };
 </script>

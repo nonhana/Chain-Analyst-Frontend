@@ -33,11 +33,6 @@
       :visible.sync="dialogVisable"
     >
       <div class="infobox">
-        <div style="position: absolute; right: 20px; top: 80px">
-          <el-button @click="edit_model(model_id)"
-            >重新编辑 / 上传模型</el-button
-          >
-        </div>
         <el-row type="flex">
           <div>
             <span>该模型的各类型节点个数：</span>
@@ -190,6 +185,7 @@ export default {
         name: "总节点个数",
         num: this.integrity_info.nodes_num["total"],
       });
+      localStorage.setItem("integrity_score", this.integrity_score);
     }, 200);
   },
 };

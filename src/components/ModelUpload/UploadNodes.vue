@@ -27,6 +27,7 @@
           default-first-option
           placeholder="请输入所属行业"
           style="width: 400px"
+          @change="selectChange"
         >
           <el-option
             v-for="item in nodes_list1"
@@ -301,6 +302,12 @@ export default {
       });
       localStorage.setItem("model_nodes", JSON.stringify(model_nodes));
     },
+    selectChange(){
+      if(this.n.length>1){
+        this.$message.warning("所属行业最多只能输入一个哦~");
+        this.n.splice(-1);
+      }
+    }
   },
   mounted() {
     if (localStorage.getItem("model_nodes")) {

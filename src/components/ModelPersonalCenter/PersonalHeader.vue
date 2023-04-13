@@ -119,8 +119,13 @@ export default {
   position: relative;
   width: 100%;
   background: #ffffff;
-  border-radius: 10px;
+  border-radius: 50px;
   overflow: hidden;
+  transition: all 0.3s;
+}
+
+.PersonalHeader-wrap:hover {
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 .background {

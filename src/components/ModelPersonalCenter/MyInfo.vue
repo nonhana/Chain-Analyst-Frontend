@@ -401,9 +401,13 @@ export default {
   position: relative;
   width: 100%;
   background: #ffffff;
-  border-radius: 10px;
+  border-radius: 50px;
   padding: 20px 20px 30px;
   margin: 0 100px;
+  transition: all 0.3s;
+}
+.InfoMain-wrap:hover{
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
 }
 .titleline {
   width: 10px;

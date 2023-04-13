@@ -1,5 +1,5 @@
 <template>
-  <div name="app" class="app-wrap">
+  <div name="app" :class="classname">
     <el-row type="flex" v-if="!login">
       <Header />
     </el-row>
@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       login: true,
+      classname:"",
     };
   },
   components: { Header },
@@ -24,8 +25,10 @@ export default {
       handler: function (newV, _) {
         if (newV.name == "login") {
           this.login = true;
+          this.classname = "login-wrap"
         } else {
           this.login = false;
+          this.classname = "app-wrap"
         }
       },
       deep: true,
@@ -46,5 +49,8 @@ body {
 .app-wrap {
   width: 100%;
   margin: 0 0 30px 0;
+}
+.login-wrap {
+  width: 100%;
 }
 </style>

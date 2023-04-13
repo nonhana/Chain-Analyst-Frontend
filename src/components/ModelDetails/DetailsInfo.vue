@@ -27,8 +27,17 @@
         </div>
         <div>
           <span
-            >综合风险评估指数：<span style="color: #00ff7b">
-              {{ risk_score }}
+            >综合风险评估指数：<span
+              style="color: #00ff7b"
+              :style="{
+                display: display_status,
+              }"
+            >
+              {{
+                this.integrity_score > 85
+                  ? 100 - (100 - this.risk_score) / 2
+                  : this.risk_score
+              }}
             </span></span
           >
         </div>
@@ -40,6 +49,11 @@
 <script>
 export default {
   name: "DetailsInfo",
+  data() {
+    return {
+      display_status: "none",
+    };
+  },
   props: [
     "model_name",
     "model_type",
@@ -47,6 +61,14 @@ export default {
     "integrity_score",
     "risk_score",
   ],
+  mounted() {
+    setTimeout(() => {
+      if (localStorage.getItem("integrity_score")) {
+        this.integrity_score = localStorage.getItem("integrity_score");
+      }
+      this.display_status = "";
+    }, 500);
+  },
 };
 </script>
 
